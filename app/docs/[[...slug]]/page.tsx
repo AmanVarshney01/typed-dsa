@@ -1,4 +1,5 @@
 import { source } from "@/lib/source";
+import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
 import {
   DocsPage,
   DocsBody,
@@ -7,6 +8,7 @@ import {
 } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
 import defaultMdxComponents from "fumadocs-ui/mdx";
+import { getGithubLastEdit } from "fumadocs-core/server";
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -17,12 +19,35 @@ export default async function Page(props: {
 
   const MDX = page.data.body;
 
+  const time = await getGithubLastEdit({
+    owner: "amanvarshney01",
+    repo: "typed-dsa",
+    path: `content/docs/${page.file.path}`,
+  });
+
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      lastUpdate={new Date(time ?? Date.now())}
+      editOnGithub={{
+        owner: "amanvarshney01",
+        repo: "typed-dsa",
+        sha: "main",
+        path: `content/docs/${page.file.path}`,
+      }}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <MDX components={{ ...defaultMdxComponents }} />
+        <MDX
+          components={{
+            ...defaultMdxComponents,
+            Popup,
+            PopupContent,
+            PopupTrigger,
+          }}
+        />
       </DocsBody>
     </DocsPage>
   );
