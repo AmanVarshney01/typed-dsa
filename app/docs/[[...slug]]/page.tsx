@@ -1,4 +1,6 @@
 import { source } from "@/lib/source";
+import { metadataImage } from "@/lib/metadata";
+
 import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
 import {
   DocsPage,
@@ -64,8 +66,8 @@ export async function generateMetadata(props: {
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
-  return {
+  return metadataImage.withImage(page.slugs, {
     title: page.data.title,
     description: page.data.description,
-  };
+  });
 }
