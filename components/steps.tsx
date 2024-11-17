@@ -1,17 +1,17 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 export function Steps({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): React.ReactElement {
-  return <div className="steps">{children}</div>;
+	return <div className="steps">{children}</div>;
 }
 
 export function Step({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): React.ReactElement {
-  return <div className="step">{children}</div>;
+	return <div className="step">{children}</div>;
 }
