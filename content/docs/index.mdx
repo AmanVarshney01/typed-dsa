@@ -15,7 +15,22 @@ const msg = `${hi}, world`
 //    ^?
 ```
 
-```typescript
-console.e
+```typescript twoslash
+// @noErrors
+console.l
 //       ^|
+
+// ---cut-start---
+// ---cut-end---
+
+// ---cut-start---
+// ---cut-end---
+
+//
+```
+
+```ts twoslash
+// @errors: 1005
+const a = '123';
+console.log(;
 ```
