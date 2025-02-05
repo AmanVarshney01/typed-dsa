@@ -1,0 +1,64 @@
+---
+title: Recursion
+preview: zoomImage
+---
+
+## Generate Parentheses
+
+```ts twoslash
+function generateParenthesis(n: number): string[] {
+  const result: string[] = [];
+  function backtrack(current: string, open: number, close: number) {
+    if (current.length === 2 * n) {
+      result.push(current)
+      return
+    }
+
+    if (open < n) {
+      backtrack(current + "(", open+1, close)
+    }
+
+    if (close < open ) {
+      backtrack(current + ")", open, close+1)
+    }
+  }
+
+  backtrack("", 0 , 0)
+
+  return result
+}
+
+console.log('generateParenthesis(20):', generateParenthesis(5))
+```
+## Combination Sum
+
+```ts
+
+function combinationSum(candidates: number[], target: number): number[][] {
+  const result: number[][] = []
+
+  function helper(current: number[], start: number, target: number) {
+    if (target < 0) {
+      return
+    }
+
+    if (target === 0) {
+      result.push([...current])
+      return
+    }
+
+    for (let i = start; i < candidates.length; i++) {
+      current.push(candidates[i])
+      helper(current, i, target - candidates[i])
+      current.pop()
+    }
+  }
+
+  helper([], 0, target)
+
+  return result
+}
+
+console.log('combinationSum([2,3,6,7], 7):', combinationSum([2,3,6,7], 7))
+
+```
