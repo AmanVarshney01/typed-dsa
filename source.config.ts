@@ -1,5 +1,6 @@
 import { remarkMermaid } from "@theguild/remark-mermaid";
 import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
+import { remarkTypeScriptToJavaScript } from "fumadocs-docgen";
 import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 import { transformerTwoslash } from "fumadocs-twoslash";
 import rehypeKatex from "rehype-katex";
@@ -11,7 +12,7 @@ export const { docs, meta } = defineDocs({
 
 export default defineConfig({
   mdxOptions: {
-    remarkPlugins: [remarkMath, remarkMermaid],
+    remarkPlugins: [remarkMath, remarkMermaid, remarkTypeScriptToJavaScript],
     rehypePlugins: (v) => [rehypeKatex, ...v],
     rehypeCodeOptions: {
       themes: {

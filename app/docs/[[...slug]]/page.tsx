@@ -2,6 +2,7 @@ import { metadataImage } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getGithubLastEdit } from "fumadocs-core/server";
 import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import {
   DocsBody,
@@ -47,6 +48,8 @@ export default async function Page(props: {
             Popup,
             PopupContent,
             PopupTrigger,
+            Tabs,
+            Tab,
           }}
         />
       </DocsBody>
