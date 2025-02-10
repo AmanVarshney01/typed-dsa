@@ -2,6 +2,7 @@
 title: Hello World
 description: Your first document
 ---
+import { CodeBlock } from '@/components/codeblock';
 
 Welcome to the docs! You can start writing documents in `/content/docs`.
 
@@ -17,10 +18,14 @@ const msg = `${hi}, world`
 //    ^?
 ```
 
+<CodeBlock lang />
+
+
 ```typescript twoslash
 // @noErrors
 console.l
 //       ^|
+
 
 // ---cut-start---
 // ---cut-end---

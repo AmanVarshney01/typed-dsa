@@ -1,3 +1,4 @@
+import { CodeBlock, Pre } from "@/components/codeblock";
 import { metadataImage } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getGithubLastEdit } from "fumadocs-core/server";
@@ -45,6 +46,11 @@ export default async function Page(props: {
         <MDX
           components={{
             ...defaultMdxComponents,
+            pre: ({ ref: _ref, ...props }) => (
+              <CodeBlock {...props}>
+                <Pre>{props.children}</Pre>
+              </CodeBlock>
+            ),
             Popup,
             PopupContent,
             PopupTrigger,
