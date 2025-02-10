@@ -1,6 +1,6 @@
-'use client';
-import type { ScrollAreaViewportProps } from '@radix-ui/react-scroll-area';
-import { Check, Copy, Edit2, Play } from 'lucide-react';
+"use client";
+import type { ScrollAreaViewportProps } from "@radix-ui/react-scroll-area";
+import { Check, Copy, Edit2, Play } from "lucide-react";
 import {
   type ButtonHTMLAttributes,
   type HTMLAttributes,
@@ -9,15 +9,17 @@ import {
   useCallback,
   useRef,
   useState,
-} from 'react';
-import { cn } from '../lib/cn';
-import { useCopyButton } from '../lib/use-copy-button';
-import { buttonVariants } from './ui/button';
-import {
-  ScrollArea,
-  ScrollBar,
-  ScrollViewport,
-} from './ui/scroll-area';
+} from "react";
+import { cn } from "../lib/cn";
+import { useCopyButton } from "../lib/use-copy-button";
+import { buttonVariants } from "./ui/button";
+import { ScrollArea, ScrollBar, ScrollViewport } from "./ui/scroll-area";
+
+declare global {
+  interface Window {
+    ts: typeof import("typescript");
+  }
+}
 
 export type CodeBlockProps = HTMLAttributes<HTMLElement> & {
   icon?: ReactNode;
@@ -31,7 +33,7 @@ export const Pre = forwardRef<HTMLPreElement, HTMLAttributes<HTMLPreElement>>(
     return (
       <pre
         ref={ref}
-        className={cn('p-4 focus-visible:outline-none', className)}
+        className={cn("p-4 focus-visible:outline-none", className)}
         {...props}
       >
         {props.children}
@@ -40,7 +42,7 @@ export const Pre = forwardRef<HTMLPreElement, HTMLAttributes<HTMLPreElement>>(
   },
 );
 
-Pre.displayName = 'Pre';
+Pre.displayName = "Pre";
 
 export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
   (
@@ -56,32 +58,33 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
   ) => {
     const areaRef = useRef<HTMLDivElement>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [code, setCode] = useState('');
-    const [output, setOutput] = useState<string>('');
-    const [typescript, setTypeScript] = useState<any>(null);
+    const [code, setCode] = useState("");
+    const [output, setOutput] = useState<string>("");
+    const [typescript, setTypeScript] = useState<typeof window.ts | null>(null);
 
-    // Initialize code from pre element content
     useCallback(() => {
-      const pre = areaRef.current?.getElementsByTagName('pre').item(0);
+      const pre = areaRef.current?.getElementsByTagName("pre").item(0);
       if (pre) {
-        setCode(pre.textContent || '');
+        setCode(pre.textContent || "");
       }
     }, []);
 
     const onCopy = useCallback(() => {
-      const pre = areaRef.current?.getElementsByTagName('pre').item(0);
+      const pre = areaRef.current?.getElementsByTagName("pre").item(0);
       if (!pre) return;
       const clone = pre.cloneNode(true) as HTMLElement;
-      clone.querySelectorAll('.nd-copy-ignore').forEach((node) => {
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      clone.querySelectorAll(".nd-copy-ignore").forEach((node) => {
         node.remove();
       });
-      void navigator.clipboard.writeText(clone.textContent ?? '');
+      void navigator.clipboard.writeText(clone.textContent ?? "");
     }, []);
 
     const loadTypeScript = async () => {
       if (!typescript && !window.ts) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/typescript/5.3.3/typescript.min.js';
+        const script = document.createElement("script");
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/typescript/5.3.3/typescript.min.js";
         script.async = true;
 
         await new Promise((resolve, reject) => {
@@ -99,43 +102,55 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
       try {
         await loadTypeScript();
 
-        const currentCode = isEditing ? code : areaRef.current?.getElementsByTagName('pre').item(0)?.textContent || '';
+        const currentCode = isEditing
+          ? code
+          : areaRef.current?.getElementsByTagName("pre").item(0)?.textContent ||
+            "";
 
         const result = window.ts.transpileModule(currentCode, {
           compilerOptions: {
             target: window.ts.ScriptTarget.ES2015,
             module: window.ts.ModuleKind.CommonJS,
-            strict: true
-          }
+            strict: true,
+          },
         });
 
         // Create custom console to capture output
         const outputs: string[] = [];
         const customConsole = {
-          log: (...args: any[]) => {
-            outputs.push(args.map(arg =>
-              typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-            ).join(' '));
+          log: (...args: unknown[]) => {
+            outputs.push(
+              args
+                .map((arg) =>
+                  typeof arg === "object"
+                    ? JSON.stringify(arg, null, 2)
+                    : String(arg),
+                )
+                .join(" "),
+            );
           },
-          error: (...args: any[]) => {
-            outputs.push(`Error: ${args.join(' ')}`);
-          }
+          error: (...args: unknown[]) => {
+            outputs.push(`Error: ${args.join(" ")}`);
+          },
         };
 
-        // Run the compiled code
-        const runFunction = new Function('console', result.outputText);
+        const runFunction = new Function("console", result.outputText);
         runFunction(customConsole);
 
-        setOutput(outputs.join('\n'));
-      } catch (error) {
-        setOutput(`Error: ${error.message}`);
+        setOutput(outputs.join("\n"));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setOutput(`Error: ${error.message}`);
+        } else {
+          setOutput("An unknown error occurred");
+        }
       }
     };
 
     const toggleEdit = () => {
       if (!isEditing) {
-        const pre = areaRef.current?.getElementsByTagName('pre').item(0);
-        setCode(pre?.textContent || '');
+        const pre = areaRef.current?.getElementsByTagName("pre").item(0);
+        setCode(pre?.textContent || "");
       }
       setIsEditing(!isEditing);
     };
@@ -145,16 +160,17 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
         ref={ref}
         {...props}
         className={cn(
-          'not-prose group fd-codeblock relative my-6 overflow-hidden rounded-lg border bg-fd-secondary/50 text-sm',
+          "not-prose group fd-codeblock relative my-6 overflow-hidden rounded-lg border bg-fd-secondary/50 text-sm",
           keepBackground &&
-            'bg-[var(--shiki-light-bg)] dark:bg-[var(--shiki-dark-bg)]',
+            "bg-[var(--shiki-light-bg)] dark:bg-[var(--shiki-dark-bg)]",
           props.className,
         )}
       >
         <div className="flex flex-row items-center gap-2 border-b bg-fd-muted px-4 py-1.5">
           {icon && (
             <div className="text-fd-muted-foreground [&_svg]:size-3.5">
-              {typeof icon === 'string' ? (
+              {typeof icon === "string" ? (
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
                 <div dangerouslySetInnerHTML={{ __html: icon }} />
               ) : (
                 icon
@@ -168,14 +184,16 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           )}
           <div className="flex gap-2">
             <button
-              className={buttonVariants({ color: 'ghost' })}
+              type="button"
+              className={buttonVariants({ color: "ghost" })}
               onClick={toggleEdit}
-              aria-label={isEditing ? 'Save' : 'Edit'}
+              aria-label={isEditing ? "Save" : "Edit"}
             >
               <Edit2 className="size-3.5" />
             </button>
             <button
-              className={buttonVariants({ color: 'ghost' })}
+              type="button"
+              className={buttonVariants({ color: "ghost" })}
               onClick={handleRun}
               aria-label="Run Code"
             >
@@ -188,13 +206,13 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
         <ScrollArea ref={areaRef} dir="ltr">
           <ScrollViewport
             {...viewportProps}
-            className={cn('max-h-[600px]', viewportProps?.className)}
+            className={cn("max-h-[600px]", viewportProps?.className)}
           >
             {isEditing ? (
               <textarea
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full h-full p-4 font-mono bg-transparent focus:outline-none"
+                className="w-full min-h-[500px] h-full p-4 font-mono bg-transparent focus:outline-none resize-y"
               />
             ) : (
               props.children
@@ -214,7 +232,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
   },
 );
 
-CodeBlock.displayName = 'CodeBlock';
+CodeBlock.displayName = "CodeBlock";
 
 function CopyButton({
   className,
@@ -230,19 +248,19 @@ function CopyButton({
       type="button"
       className={cn(
         buttonVariants({
-          color: 'ghost',
+          color: "ghost",
         }),
-        'transition-opacity group-hover:opacity-100 [&_svg]:size-3.5',
-        !checked && '[@media(hover:hover)]:opacity-0',
+        "transition-opacity group-hover:opacity-100 [&_svg]:size-3.5",
+        !checked && "[@media(hover:hover)]:opacity-0",
         className,
       )}
-      aria-label={checked ? 'Copied Text' : 'Copy Text'}
+      aria-label={checked ? "Copied Text" : "Copy Text"}
       onClick={onClick}
       {...props}
     >
-      <Check className={cn('transition-transform', !checked && 'scale-0')} />
+      <Check className={cn("transition-transform", !checked && "scale-0")} />
       <Copy
-        className={cn('absolute transition-transform', checked && 'scale-0')}
+        className={cn("absolute transition-transform", checked && "scale-0")}
       />
     </button>
   );
