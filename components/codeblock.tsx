@@ -1,5 +1,8 @@
 "use client";
+import { javascript } from "@codemirror/lang-javascript";
 import type { ScrollAreaViewportProps } from "@radix-ui/react-scroll-area";
+import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
+import CodeMirror from "@uiw/react-codemirror";
 import { Check, Copy, Edit2, Play } from "lucide-react";
 import {
   type ButtonHTMLAttributes,
@@ -115,7 +118,6 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           },
         });
 
-        // Create custom console to capture output
         const outputs: string[] = [];
         const customConsole = {
           log: (...args: unknown[]) => {
@@ -154,6 +156,10 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
       }
       setIsEditing(!isEditing);
     };
+
+    const handleEditorChange = useCallback((value: string) => {
+      setCode(value);
+    }, []);
 
     return (
       <figure
@@ -209,10 +215,36 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
             className={cn("max-h-[600px]", viewportProps?.className)}
           >
             {isEditing ? (
-              <textarea
+              <CodeMirror
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full min-h-[500px] h-full p-4 font-mono bg-transparent focus:outline-none resize-y"
+                height="100%"
+                theme={tokyoNight}
+                onChange={handleEditorChange}
+                extensions={[javascript({ typescript: true })]}
+                basicSetup={{
+                  lineNumbers: true,
+                  highlightActiveLineGutter: true,
+                  highlightSpecialChars: true,
+                  foldGutter: true,
+                  drawSelection: true,
+                  dropCursor: true,
+                  allowMultipleSelections: true,
+                  indentOnInput: true,
+                  bracketMatching: true,
+                  closeBrackets: true,
+                  autocompletion: true,
+                  rectangularSelection: true,
+                  crosshairCursor: true,
+                  highlightActiveLine: true,
+                  highlightSelectionMatches: true,
+                  closeBracketsKeymap: true,
+                  defaultKeymap: true,
+                  searchKeymap: true,
+                  historyKeymap: true,
+                  foldKeymap: true,
+                  completionKeymap: true,
+                  lintKeymap: true,
+                }}
               />
             ) : (
               props.children
