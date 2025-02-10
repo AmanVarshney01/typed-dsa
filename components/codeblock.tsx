@@ -4,12 +4,14 @@ import type { ScrollAreaViewportProps } from "@radix-ui/react-scroll-area";
 import { tokyoNight } from "@uiw/codemirror-theme-tokyo-night";
 import CodeMirror from "@uiw/react-codemirror";
 import { Check, Copy, Edit2, Play } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   type ButtonHTMLAttributes,
   type HTMLAttributes,
   type ReactNode,
   forwardRef,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -64,10 +66,13 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
     const [code, setCode] = useState("");
     const [output, setOutput] = useState<string>("");
     const [typescript, setTypeScript] = useState<typeof window.ts | null>(null);
+    const [height, setHeight] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    useCallback(() => {
+    useEffect(() => {
       const pre = areaRef.current?.getElementsByTagName("pre").item(0);
       if (pre) {
+        setHeight(pre.offsetHeight + 2);
         setCode(pre.textContent || "");
       }
     }, []);
@@ -84,24 +89,30 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
     }, []);
 
     const loadTypeScript = async () => {
-      if (!typescript && !window.ts) {
-        const script = document.createElement("script");
-        script.src =
-          "https://cdnjs.cloudflare.com/ajax/libs/typescript/5.3.3/typescript.min.js";
-        script.async = true;
+      setIsLoading(true);
+      try {
+        if (!typescript && !window.ts) {
+          const script = document.createElement("script");
+          script.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/typescript/5.3.3/typescript.min.js";
+          script.async = true;
 
-        await new Promise((resolve, reject) => {
-          script.onload = () => {
-            setTypeScript(window.ts);
-            resolve(null);
-          };
-          script.onerror = reject;
-          document.body.appendChild(script);
-        });
+          await new Promise((resolve, reject) => {
+            script.onload = () => {
+              setTypeScript(window.ts);
+              resolve(null);
+            };
+            script.onerror = reject;
+            document.body.appendChild(script);
+          });
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     const handleRun = async () => {
+      setIsLoading(true);
       try {
         await loadTypeScript();
 
@@ -146,6 +157,8 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
         } else {
           setOutput("An unknown error occurred");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -194,6 +207,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
               className={buttonVariants({ color: "ghost" })}
               onClick={toggleEdit}
               aria-label={isEditing ? "Save" : "Edit"}
+              disabled={isLoading}
             >
               <Edit2 className="size-3.5" />
             </button>
@@ -202,8 +216,13 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
               className={buttonVariants({ color: "ghost" })}
               onClick={handleRun}
               aria-label="Run Code"
+              disabled={isLoading}
             >
-              <Play className="size-3.5" />
+              {isLoading ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Play className="size-3.5" />
+              )}
             </button>
             {allowCopy && <CopyButton className="-me-2" onCopy={onCopy} />}
           </div>
@@ -213,11 +232,14 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           <ScrollViewport
             {...viewportProps}
             className={cn("max-h-[600px]", viewportProps?.className)}
+            style={{
+              minHeight: height ? `${height}px` : undefined,
+            }}
           >
             {isEditing ? (
               <CodeMirror
                 value={code}
-                height="100%"
+                height={height ? `${height}px` : "auto"}
                 theme={tokyoNight}
                 onChange={handleEditorChange}
                 extensions={[javascript({ typescript: true })]}
