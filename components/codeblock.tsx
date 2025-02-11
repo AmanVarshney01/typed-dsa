@@ -185,22 +185,24 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(
           props.className,
         )}
       >
-        <div className="flex flex-row items-center gap-2 border-b bg-fd-muted px-4 py-1.5">
-          {icon && (
-            <div className="text-fd-muted-foreground [&_svg]:size-3.5">
-              {typeof icon === "string" ? (
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                <div dangerouslySetInnerHTML={{ __html: icon }} />
-              ) : (
-                icon
-              )}
-            </div>
-          )}
-          {title && (
-            <figcaption className="flex-1 truncate text-fd-muted-foreground">
-              {title}
-            </figcaption>
-          )}
+        <div className="flex flex-row items-center justify-between gap-2 border-b bg-fd-muted px-4 py-1.5">
+          <div className="flex flex-row items-center gap-2">
+            {icon && (
+              <div className="text-fd-muted-foreground [&_svg]:size-3.5">
+                {typeof icon === "string" ? (
+                  // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+                  <div dangerouslySetInnerHTML={{ __html: icon }} />
+                ) : (
+                  icon
+                )}
+              </div>
+            )}
+            {title && (
+              <figcaption className="flex-1 truncate text-fd-muted-foreground">
+                {title}
+              </figcaption>
+            )}
+          </div>
           <div className="flex gap-2">
             <button
               type="button"
@@ -304,8 +306,7 @@ function CopyButton({
         buttonVariants({
           color: "ghost",
         }),
-        "transition-opacity group-hover:opacity-100 [&_svg]:size-3.5",
-        !checked && "[@media(hover:hover)]:opacity-0",
+        "[&_svg]:size-3.5",
         className,
       )}
       aria-label={checked ? "Copied Text" : "Copy Text"}
