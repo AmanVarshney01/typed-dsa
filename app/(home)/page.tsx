@@ -1,3 +1,4 @@
+import Squares from "@/components/squares-background";
 import {
   HoverCard,
   HoverCardContent,
@@ -7,8 +8,19 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="flex flex-1 flex-col items-center min-h-screen bg-fd-background">
-      <section className="w-full px-4 py-20 md:py-32 bg-gradient-to-b from-fd-accent to-fd-background">
+    <main className="flex flex-1 flex-col items-center min-h-screen bg-fd-background/80 relative z-0">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-auto">
+          <Squares
+            speed={0.5}
+            squareSize={40}
+            direction="diagonal"
+            borderColor="rgba(255, 255, 255, 0.1)"
+            hoverFillColor="rgba(34, 34, 34, 0.5)"
+          />
+        </div>
+      </div>
+      <section className="w-full px-4 py-20 md:py-32 bg-gradient-to-b from-fd-accent/50 to-transparent">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-fd-foreground to-fd-primary bg-clip-text text-transparent">
             Data Structures & Algorithms in{" "}
@@ -117,8 +129,8 @@ function FeatureCard({
 }) {
   return (
     <div
-      className="group p-6 rounded-lg bg-fd-card border border-fd-border
-      hover:border-fd-foreground transition-all duration-200"
+      className="group p-6 rounded-lg bg-fd-card/95 border border-fd-border
+      hover:border-fd-foreground transition-all duration-200 backdrop-blur-sm"
     >
       <h3 className="text-xl font-semibold mb-3 text-fd-foreground">{title}</h3>
       <p className="text-fd-muted-foreground">{description}</p>
