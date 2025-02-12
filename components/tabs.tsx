@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
 import type {
-  TabsContentProps,
   TabsProps as BaseProps,
-} from '@radix-ui/react-tabs';
+  TabsContentProps,
+} from "@radix-ui/react-tabs";
 import {
-  useMemo,
-  useState,
   createContext,
   useContext,
-  useRef,
-  useLayoutEffect,
-  useId,
   useEffect,
-} from 'react';
-import { cn } from '../lib/cn';
-import * as Primitive from './ui/tabs';
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { cn } from "../lib/cn";
+import * as Primitive from "./ui/tabs";
 
 export { Primitive };
 
@@ -77,7 +77,7 @@ export function Tabs({
   const [value, setValue] = useState(values[defaultIndex]);
 
   const valueToIdMap = useMemo(() => new Map<string, string>(), []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-reconstruct the collection if items changed
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-reconstruct the collection if items changed
   const collection = useMemo(() => createCollection(), [items]);
 
   const onChange: ChangeListener = (v) => {
@@ -122,11 +122,12 @@ export function Tabs({
           const id = valueToIdMap.get(v);
 
           if (id) {
-            window.history.replaceState(null, '', `#${id}`);
+            window.history.replaceState(null, "", `#${id}`);
           }
         }
 
         if (groupId) {
+          // biome-ignore lint/complexity/noForEach: <explanation>
           listeners.get(groupId)?.forEach((item) => {
             item(v);
           });
@@ -138,7 +139,7 @@ export function Tabs({
         }
       }}
       {...props}
-      className={cn('my-4', props.className)}
+      className={cn("my-4", props.className)}
     >
       <Primitive.TabsList>
         {values.map((v, i) => (
@@ -160,14 +161,14 @@ export function Tabs({
 }
 
 function toValue(v: string): string {
-  return v.toLowerCase().replace(/\s/, '-');
+  return v.toLowerCase().replace(/\s/, "-");
 }
 
-export type TabProps = Omit<TabsContentProps, 'value'> & {
+export type TabProps = Omit<TabsContentProps, "value"> & {
   /**
    * Value of tab, detect from index if unspecified.
    */
-  value?: TabsContentProps['value'];
+  value?: TabsContentProps["value"];
 };
 
 export function Tab({ value, className, ...props }: TabProps) {
@@ -178,7 +179,7 @@ export function Tab({ value, className, ...props }: TabProps) {
     ctx?.items.at(useCollectionIndex());
   if (!resolvedValue)
     throw new Error(
-      'Failed to resolve tab `value`, please pass a `value` prop to the Tab component.',
+      "Failed to resolve tab `value`, please pass a `value` prop to the Tab component.",
     );
 
   const v = toValue(resolvedValue);
@@ -191,7 +192,7 @@ export function Tab({ value, className, ...props }: TabProps) {
     <Primitive.TabsContent
       value={v}
       className={cn(
-        'prose-no-margin [&>figure:only-child]:-m-4 [&>figure:only-child]:rounded-none [&>figure:only-child]:border-none',
+        "prose-no-margin [&>figure:only-child]:-m-4 [&>figure:only-child]:rounded-none [&>figure:only-child]:border-none",
         className,
       )}
       {...props}
@@ -217,7 +218,7 @@ function createCollection() {
 function useCollectionIndex() {
   const key = useId();
   const ctx = useContext(TabsContext);
-  if (!ctx) throw new Error('You must wrap your component in <Tabs>');
+  if (!ctx) throw new Error("You must wrap your component in <Tabs>");
 
   const list = ctx.collection;
 
@@ -230,6 +231,7 @@ function useCollectionIndex() {
     if (idx !== -1) list.splice(idx, 1);
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useMemo(() => {
     // re-order the item to the bottom if registered
     unregister();
@@ -237,6 +239,7 @@ function useCollectionIndex() {
     // eslint-disable-next-line -- register
   }, [list]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     return unregister;
     // eslint-disable-next-line -- clean up only

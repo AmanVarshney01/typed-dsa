@@ -9,3 +9,11 @@
 .cm-editor .cm-scroller {
     padding: 0.5rem;
 }
+
+header {
+    @apply border-none max-w-full lg:mt-0 lg:py-1 lg:rounded-none lg:w-full;
+
+    nav {
+        @apply lg:max-w-fd-container mx-auto;
+    }
+}
