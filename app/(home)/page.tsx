@@ -1,3 +1,8 @@
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -6,7 +11,64 @@ export default function HomePage() {
       <section className="w-full px-4 py-20 md:py-32 bg-gradient-to-b from-fd-accent to-fd-background">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-fd-foreground to-fd-primary bg-clip-text text-transparent">
-            Data Structures & Algorithms in TypeScript
+            Data Structures & Algorithms in{" "}
+            <HoverCard>
+              <HoverCardTrigger>
+                <span className="cursor-help decoration-blue-500/50 hover:decoration-blue-500 underline decoration-wavy decoration-2 underline-offset-4 transition-all duration-300">
+                  TypeScript
+                </span>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80 text-start border-[#45475a] bg-[#1e1e2e] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
+                <div className="font-mono text-sm">
+                  <div className="flex flex-col space-y-2">
+                    <div className="text-sm font-semibold text-[#cdd6f4] animate-fade-in">
+                      TypeScript
+                    </div>
+                    <div className="text-xs text-[#cdd6f4] font-normal bg-[#181825] p-2 rounded-md overflow-hidden">
+                      <div className="animate-slide-in-right">
+                        <span className="text-[#89b4fa]">interface</span>{" "}
+                        <span className="text-[#a6e3a1]">TypeScript</span> {"{"}
+                      </div>
+                      <div className="pl-4">
+                        {[
+                          {
+                            prop: "version",
+                            value: '"5.0+"',
+                            delay: "delay-[50ms]",
+                          },
+                          {
+                            prop: "strict",
+                            value: "boolean",
+                            delay: "delay-[100ms]",
+                          },
+                          {
+                            prop: "superset",
+                            value: '"JavaScript"',
+                            delay: "delay-[150ms]",
+                          },
+                        ].map((item) => (
+                          <div
+                            key={item.prop}
+                            className={`animate-slide-in-right ${item.delay}`}
+                          >
+                            <span className="text-[#f5c2e7]">{item.prop}</span>:{" "}
+                            <span className="text-[#fab387]">{item.value}</span>
+                            ;
+                          </div>
+                        ))}
+                      </div>
+                      <div className="animate-slide-in-right delay-[200ms]">
+                        {"}"}
+                      </div>
+                    </div>
+                    <div className="text-xs text-[#bac2de] animate-fade-in delay-[250ms]">
+                      A strongly typed programming language that builds on
+                      JavaScript, adding static type definitions.
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           </h1>
           <p className="text-xl text-fd-muted-foreground mb-10 max-w-2xl mx-auto">
             Master type-safe implementations of data structures and algorithms
