@@ -4,6 +4,7 @@ export const baseOptions: BaseLayoutProps = {
   githubUrl: "https://github.com/AmanVarshney01/typed-dsa",
   nav: {
     title: "Typed DSA",
+    transparentMode: "top",
   },
   links: [
     {

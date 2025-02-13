@@ -20,7 +20,7 @@ header {
 
 @keyframes slide-in-right {
     from {
-        transform: translateX(-10px);
+        transform: translateX(-5px);
         opacity: 0;
     }
     to {
